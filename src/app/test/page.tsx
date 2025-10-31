@@ -1,19 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { Box, Container, Stack, Button } from "@chakra-ui/react";
+import { Box, Container, Button, Grid, GridItem } from "@chakra-ui/react";
 import {
   ProgressBar,
   QuestionCard,
-  BackButton,
   LoadingOverlay,
+  QuestionNavigator,
 } from "@/components/test";
+
+// Helper function untuk menentukan section berdasarkan nomor soal
+const getSection = (questionNumber: number): string => {
+  if (questionNumber <= 10) return "BAGIAN 1";
+  if (questionNumber <= 20) return "BAGIAN 2";
+  return "BAGIAN 3";
+};
 
 // Data dummy untuk demo
 const questionsData = [
   {
     id: 1,
-    section: "BAGIAN 1",
     question: "Dosen ngasih tugas. Kamu tim yang mana?",
     choices: [
       {
@@ -36,7 +42,6 @@ const questionsData = [
   },
   {
     id: 2,
-    section: "BAGIAN 1",
     question: "Ketika bekerja dalam tim, kamu cenderung...",
     choices: [
       { label: "A", text: "Menjadi pemimpin dan mengorganisir semua anggota." },
@@ -57,75 +62,96 @@ export default function TestPage() {
   const totalQuestions = questionsData.length;
 
   const handleSelectChoice = (label: string) => {
-    setAnswers({
+    // Simpan jawaban
+    const newAnswers = {
       ...answers,
       [currentQuestion.id]: label,
-    });
+    };
+    setAnswers(newAnswers);
+
+    // Auto pindah ke pertanyaan berikutnya setelah 300ms
+    setTimeout(() => {
+      if (currentQuestionIndex < questionsData.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+      }
+    }, 300);
   };
 
-  const handleNext = () => {
-    if (currentQuestionIndex < questionsData.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else {
-      // Simulasi submit
-      setIsLoading(true);
-      setTimeout(() => {
-        setIsLoading(false);
-        alert("Test selesai! Jawaban: " + JSON.stringify(answers));
-      }, 2000);
-    }
+  const handleSelectQuestion = (questionIndex: number) => {
+    setCurrentQuestionIndex(questionIndex);
   };
 
-  const handleBack = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-    }
+  const handleFinish = () => {
+    // Simulasi submit
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      alert("Test selesai! Jawaban: " + JSON.stringify(answers));
+    }, 2000);
   };
 
+  const isLastQuestion = currentQuestionIndex === questionsData.length - 1;
   const isAnswered = answers[currentQuestion.id] !== undefined;
+  const answeredQuestions = Object.keys(answers).map(
+    (id) => questionsData.findIndex((q) => q.id === parseInt(id))
+  );
 
   return (
     <>
       {isLoading && <LoadingOverlay message="Menyimpan jawaban..." />}
       
       <Box minH="100vh" bg="gray.50" py={8}>
-        <Container maxW="5xl">
+        <Container maxW="7xl">
           {/* Progress Bar */}
           <ProgressBar
             currentQuestion={currentQuestionIndex + 1}
             totalQuestions={totalQuestions}
           />
 
-          {/* Question Card */}
-          <Box display="flex" justifyContent="center" mb={8}>
-            <QuestionCard
-              section={currentQuestion.section}
-              question={currentQuestion.question}
-              choices={currentQuestion.choices}
-              selectedChoice={answers[currentQuestion.id]}
-              onSelectChoice={handleSelectChoice}
-            />
-          </Box>
+          {/* Grid Layout: Question Card + Navigator */}
+          <Grid
+            templateColumns={{ base: "1fr", lg: "1fr 300px" }}
+            gap={6}
+            alignItems="start"
+          >
+            {/* Left Column: Question Card */}
+            <GridItem>
+              <Box mb={8}>
+                <QuestionCard
+                  section={getSection(currentQuestionIndex + 1)}
+                  question={currentQuestion.question}
+                  choices={currentQuestion.choices}
+                  selectedChoice={answers[currentQuestion.id]}
+                  onSelectChoice={handleSelectChoice}
+                />
+              </Box>
 
-          {/* Navigation Buttons */}
-          <Stack direction="row" justify="space-between" maxW="4xl" mx="auto">
-            <BackButton
-              onClick={handleBack}
-              disabled={currentQuestionIndex === 0}
-            />
-            <Button
-              colorPalette="blue"
-              size="md"
-              onClick={handleNext}
-              disabled={!isAnswered}
-              fontWeight="medium"
-              px={8}
-            >
-              {currentQuestionIndex === questionsData.length - 1
-                ? "Selesai"
-                : "Selanjutnya"}
-            </Button>
-          </Stack>
+              {/* Button Selesai - hanya muncul di pertanyaan terakhir dan sudah dijawab */}
+              {isLastQuestion && isAnswered && (
+                <Box display="flex" justifyContent="center">
+                  <Button
+                    colorPalette="blue"
+                    size="lg"
+                    onClick={handleFinish}
+                    fontWeight="medium"
+                    px={12}
+                  >
+                    Selesai
+                  </Button>
+                </Box>
+              )}
+            </GridItem>
+
+            {/* Right Column: Question Navigator */}
+            <GridItem display={{ base: "none", lg: "block" }}>
+              <QuestionNavigator
+                totalQuestions={totalQuestions}
+                currentQuestion={currentQuestionIndex + 1}
+                answeredQuestions={answeredQuestions}
+                onSelectQuestion={handleSelectQuestion}
+              />
+            </GridItem>
+          </Grid>
         </Container>
       </Box>
     </>
