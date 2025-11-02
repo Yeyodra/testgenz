@@ -1,0 +1,253 @@
+[
+  {
+    "id": 1,
+    "text": "When faced with a difficult problem, you are more likely to:",
+    "options": [
+      "Analyze it logically and systematically.",
+      "Go with your gut feeling and intuition."
+    ],
+    "category": "personality",
+    "difficulty": "easy"
+  },
+  {
+    "id": 2,
+    "text": "In a social gathering, you tend to:",
+    "options": [
+      "Engage in deep conversations with a few people.",
+      "Mingle and interact with many different people."
+    ],
+    "category": "personality",
+    "difficulty": "easy"
+  },
+  {
+    "id": 3,
+    "text": "Your ideal weekend involves:",
+    "options": [
+      "A well-planned schedule of activities.",
+      "Spontaneous adventures with no fixed plan."
+    ],
+    "category": "personality",
+    "difficulty": "easy"
+  },
+  {
+    "id": 4,
+    "text": "When making decisions, you prioritize:",
+    "options": [
+      "Harmony and the feelings of others.",
+      "Logic and objective truth."
+    ],
+    "category": "personality",
+    "difficulty": "medium"
+  },
+  {
+    "id": 5,
+    "text": "You feel most energized when:",
+    "options": [
+      "Spending quiet time alone.",
+      "Being in a lively, bustling environment."
+    ],
+    "category": "personality",
+    "difficulty": "easy"
+  },
+  {
+    "id": 6,
+    "text": "When working on a project, you prefer to:",
+    "options": [
+      "Follow a structured plan and timeline.",
+      "Keep things flexible and adapt as you go."
+    ],
+    "category": "personality",
+    "difficulty": "easy"
+  },
+  {
+    "id": 7,
+    "text": "You are more comfortable with:",
+    "options": [
+      "Concrete facts and details.",
+      "Abstract concepts and possibilities."
+    ],
+    "category": "personality",
+    "difficulty": "medium"
+  },
+  {
+    "id": 8,
+    "text": "In a group discussion, you usually:",
+    "options": [
+      "Listen carefully before sharing your thoughts.",
+      "Jump in and share ideas as they come to you."
+    ],
+    "category": "personality",
+    "difficulty": "easy"
+  },
+  {
+    "id": 9,
+    "text": "You find it easier to:",
+    "options": [
+      "Understand and follow rules and systems.",
+      "Think outside the box and challenge conventions."
+    ],
+    "category": "personality",
+    "difficulty": "medium"
+  },
+  {
+    "id": 10,
+    "text": "When giving feedback, you tend to:",
+    "options": [
+      "Be direct and focus on what needs improvement.",
+      "Be diplomatic and consider the person's feelings."
+    ],
+    "category": "personality",
+    "difficulty": "medium"
+  },
+  {
+    "id": 11,
+    "text": "You prefer tasks that are:",
+    "options": [
+      "Routine and predictable.",
+      "Varied and unpredictable."
+    ],
+    "category": "personality",
+    "difficulty": "easy"
+  },
+  {
+    "id": 12,
+    "text": "In your free time, you are more likely to:",
+    "options": [
+      "Reflect on your thoughts and ideas.",
+      "Seek out new experiences and activities."
+    ],
+    "category": "personality",
+    "difficulty": "easy"
+  },
+  {
+    "id": 13,
+    "text": "You make decisions based more on:",
+    "options": [
+      "Personal values and how they affect people.",
+      "Logical analysis and objective criteria."
+    ],
+    "category": "personality",
+    "difficulty": "medium"
+  },
+  {
+    "id": 14,
+    "text": "You are more motivated by:",
+    "options": [
+      "Achieving specific goals and results.",
+      "Exploring new ideas and possibilities."
+    ],
+    "category": "personality",
+    "difficulty": "medium"
+  },
+  {
+    "id": 15,
+    "text": "When learning something new, you prefer:",
+    "options": [
+      "Hands-on practice and real examples.",
+      "Understanding the theory and big picture first."
+    ],
+    "category": "personality",
+    "difficulty": "medium"
+  },
+  {
+    "id": 16,
+    "text": "You feel more satisfied when:",
+    "options": [
+      "Tasks are completed and checked off your list.",
+      "You have the freedom to change plans as needed."
+    ],
+    "category": "personality",
+    "difficulty": "easy"
+  },
+  {
+    "id": 17,
+    "text": "In conversations, you focus more on:",
+    "options": [
+      "The literal meaning of words.",
+      "The underlying implications and meanings."
+    ],
+    "category": "personality",
+    "difficulty": "medium"
+  },
+  {
+    "id": 18,
+    "text": "You recharge your energy by:",
+    "options": [
+      "Having time to yourself.",
+      "Being around other people."
+    ],
+    "category": "personality",
+    "difficulty": "easy"
+  },
+  {
+    "id": 19,
+    "text": "You are more interested in:",
+    "options": [
+      "What is real and present.",
+      "What could be and future possibilities."
+    ],
+    "category": "personality",
+    "difficulty": "medium"
+  },
+  {
+    "id": 20,
+    "text": "When resolving conflicts, you:",
+    "options": [
+      "Focus on finding a fair and logical solution.",
+      "Prioritize maintaining relationships and harmony."
+    ],
+    "category": "personality",
+    "difficulty": "medium"
+  },
+  {
+    "id": 21,
+    "text": "You prefer environments that are:",
+    "options": [
+      "Organized and structured.",
+      "Open-ended and flexible."
+    ],
+    "category": "personality",
+    "difficulty": "easy"
+  },
+  {
+    "id": 22,
+    "text": "You are more drawn to:",
+    "options": [
+      "Practical and proven methods.",
+      "Innovative and experimental approaches."
+    ],
+    "category": "personality",
+    "difficulty": "medium"
+  },
+  {
+    "id": 23,
+    "text": "In your work, you value:",
+    "options": [
+      "Efficiency and getting things done.",
+      "Creativity and exploring new ideas."
+    ],
+    "category": "personality",
+    "difficulty": "medium"
+  },
+  {
+    "id": 24,
+    "text": "You tend to be more:",
+    "options": [
+      "Reserved and private.",
+      "Outgoing and expressive."
+    ],
+    "category": "personality",
+    "difficulty": "easy"
+  },
+  {
+    "id": 25,
+    "text": "When planning, you prefer to:",
+    "options": [
+      "Decide in advance and stick to the plan.",
+      "Keep your options open and decide later."
+    ],
+    "category": "personality",
+    "difficulty": "easy"
+  }
+]
+
