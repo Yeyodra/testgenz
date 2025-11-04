@@ -2,12 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Box, Container, Button, Text } from "@chakra-ui/react";
-import {
-  ProgressBar,
-  QuestionCard,
-  LoadingOverlay,
-} from "@/components/test";
-import { fetchQuestions, Question } from "@/lib/api/questions";
+import { ProgressBar, QuestionCard, LoadingOverlay } from "@/components/test";
+import type { Question } from "@/lib/questions";
 
 // Helper function untuk menentukan section berdasarkan nomor soal
 const getSection = (questionNumber: number): string => {
@@ -23,13 +19,16 @@ export default function TestPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch questions dari API saat component mount
   useEffect(() => {
     const loadQuestions = async () => {
       try {
         setIsLoading(true);
         setError(null);
-        const questions = await fetchQuestions({ limit: 25 });
+        const response = await fetch("/api/questions");
+        if (!response.ok) {
+          throw new Error("Gagal mengambil data dari server");
+        }
+        const questions = await response.json();
         setQuestionsData(questions);
       } catch (err) {
         setError("Gagal memuat pertanyaan. Silakan refresh halaman.");
@@ -49,7 +48,13 @@ export default function TestPage() {
 
   if (error || questionsData.length === 0) {
     return (
-      <Box minH="100vh" bg="gray.50" display="flex" alignItems="center" justifyContent="center">
+      <Box
+        minH="100vh"
+        bg="gray.50"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
         <Box textAlign="center" p={8}>
           <Text fontSize="xl" color="red.500" mb={4}>
             {error || "Tidak ada pertanyaan tersedia"}
@@ -82,13 +87,41 @@ export default function TestPage() {
   };
 
   const handleFinish = async () => {
-    // Simulasi submit - nanti bisa diganti dengan API call ke /api/analyze
     setIsLoading(true);
-    setTimeout(() => {
+
+    const formattedAnswers = Object.entries(answers).map(([key, value]) => ({
+      questionId: parseInt(key, 10),
+      value: value,
+    }));
+
+    const userData = {
+      nama: "Tester Dulu", // TODO: Ambil dari state PreTestForm
+    };
+
+    try {
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          answers: formattedAnswers,
+          userData: userData,
+        }),
+      });
+
+      const result = await response.json();
       setIsLoading(false);
-      alert("Test selesai! Jawaban: " + JSON.stringify(answers));
-      // TODO: Implement API call ke /api/analyze
-    }, 2000);
+
+      if (!response.ok) {
+        throw new Error(result.error || "Gagal menganalisis jawaban.");
+      }
+
+      // Tampilkan hasil analisis (sementara pake alert)
+      alert("Test selesai! Hasil: " + result.analysis);
+      // TODO: Ganti alert dengan router.push('/result?data=' + JSON.stringify(result))
+    } catch (err: any) {
+      setIsLoading(false);
+      setError(err.message);
+    }
   };
 
   const isLastQuestion = currentQuestionIndex === questionsData.length - 1;
@@ -97,7 +130,7 @@ export default function TestPage() {
   return (
     <>
       {isLoading && <LoadingOverlay message="Memproses..." />}
-      
+
       <Box minH="100vh" bg="gray.50" py={8}>
         <Container maxW="5xl">
           {/* Progress Bar */}
@@ -110,8 +143,8 @@ export default function TestPage() {
           <Box display="flex" justifyContent="center" mb={8}>
             <QuestionCard
               section={getSection(currentQuestionIndex + 1)}
-              question={currentQuestion.question}
-              choices={currentQuestion.choices}
+              question={currentQuestion.text}
+              choices={currentQuestion.options}
               selectedChoice={answers[currentQuestion.id]}
               onSelectChoice={handleSelectChoice}
             />
@@ -136,4 +169,3 @@ export default function TestPage() {
     </>
   );
 }
-

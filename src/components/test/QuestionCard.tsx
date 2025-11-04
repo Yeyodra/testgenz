@@ -1,15 +1,11 @@
 import { Box, Text, Stack, Badge } from "@chakra-ui/react";
 import { ChoiceButton } from "./ChoiceButton";
-
-interface Choice {
-  label: string;
-  text: string;
-}
+import type { Question, Option } from "@/lib/questions";
 
 interface QuestionCardProps {
   section: string;
   question: string;
-  choices: Choice[];
+  choices: Option[];
   selectedChoice?: string;
   onSelectChoice: (label: string) => void;
 }
@@ -60,28 +56,22 @@ export const QuestionCard = ({
 
         {/* Choices */}
         <Stack gap={3} mt={4}>
-          {choices.map((choice) => (
+          {choices.map((option: Option) => (
             <ChoiceButton
-              key={choice.label}
-              label={choice.label}
-              text={choice.text}
-              isSelected={selectedChoice === choice.label}
-              onClick={() => onSelectChoice(choice.label)}
+              key={option.id}
+              label={option.id}
+              text={option.text}
+              isSelected={selectedChoice === option.id}
+              onClick={() => onSelectChoice(option.id)}
             />
           ))}
         </Stack>
 
         {/* Helper Text */}
-        <Text
-          fontSize="sm"
-          color="gray.500"
-          textAlign="center"
-          mt={4}
-        >
+        <Text fontSize="sm" color="gray.500" textAlign="center" mt={4}>
           Pilih jawaban yang paling kamu banget!
         </Text>
       </Stack>
     </Box>
   );
 };
-
