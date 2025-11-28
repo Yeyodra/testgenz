@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Box, Container, Button, Text, Alert } from "@chakra-ui/react";
 import { ProgressBar, QuestionCard, LoadingOverlay } from "@/components/test";
-import { saveTestResult } from "@/lib/localStorage";
+import { saveTestResult, saveTestResultToHistory } from "@/lib/localStorage";
 import type { Question } from "@/lib/questions";
 import type { TestResult, AnalysisResponse } from "@/types";
 
@@ -99,9 +99,20 @@ export default function TestPage() {
       value: value,
     }));
 
-    const userData = {
-      nama: "Tester Dulu", // TODO: Ambil dari state PreTestForm
+    // Get user data from localStorage (saved by PreTestForm)
+    let userData = {
+      nama: "Tester",
+      email: undefined as string | undefined,
     };
+    
+    try {
+      const savedUserData = localStorage.getItem("testgenz_user");
+      if (savedUserData) {
+        userData = JSON.parse(savedUserData);
+      }
+    } catch (err) {
+      console.error("Failed to load user data:", err);
+    }
 
     try {
       const response = await fetch("/api/analyze", {
@@ -128,14 +139,18 @@ export default function TestPage() {
         timestamp: new Date().toISOString(),
       };
 
-      // Save result to localStorage
+      // Save result to localStorage (current result)
       saveTestResult(testResult);
+      
+      // Also save to history
+      saveTestResultToHistory(testResult);
 
       // Navigate to result page
       router.push("/result");
-    } catch (err: any) {
+    } catch (err) {
       setIsLoading(false);
-      setError(err.message || "Terjadi kesalahan saat memproses hasil tes.");
+      const errorMessage = err instanceof Error ? err.message : "Terjadi kesalahan saat memproses hasil tes.";
+      setError(errorMessage);
       console.error("Error analyzing test:", err);
     }
   };

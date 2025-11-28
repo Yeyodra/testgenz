@@ -1,66 +1,66 @@
-"use client"; // Komponen ini interaktif (useState, useToast)
+"use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Box,
   Button,
-  FormControl,
-  FormLabel,
   Heading,
   Input,
   VStack,
-  useToast,
   Text,
-  InputGroup,
-  InputLeftElement,
-  Icon,
+  Stack,
 } from "@chakra-ui/react";
-import { AtSignIcon, EmailIcon } from "@chakra-ui/icons";
+import { Field } from "@chakra-ui/react";
+import { toaster } from "@/components/ui/toaster";
 
-// Nama fungsi harus 'export default' agar bisa di-import
 export default function PreTestForm() {
-  const [username, setUsername] = useState("");
+  const router = useRouter();
+  const [nama, setNama] = useState("");
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const toast = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
+    // Simpan data user ke localStorage untuk digunakan saat submit tes
+    const userData = {
+      nama,
+      email: email || undefined, // email is optional
+    };
+    
+    localStorage.setItem("testgenz_user", JSON.stringify(userData));
+
     setTimeout(() => {
       setIsLoading(false);
-      toast({
+      toaster.create({
         title: "Satu langkah lagi!",
         description: "Data diri diterima. Memuat tes kepribadian...",
-        status: "success",
+        type: "success",
         duration: 3000,
-        isClosable: true,
-        position: "top",
       });
-      // Nanti di sini Anda bisa pindah halaman ke tes psikologinya
+      
+      // Navigate ke halaman tes
+      router.push("/test");
     }, 1500);
   };
 
-  // Perhatikan kita hanya me-return <Box>, bukan <Container> satu layar penuh
-  // Ini agar komponennya reusable
   return (
     <Box
       as="form"
       onSubmit={handleSubmit}
       p={8}
-      // --- Efek "Glassmorphism" ---
       bg="whiteAlpha.100"
       backdropFilter="blur(10px)"
       border="1px solid"
       borderColor="whiteAlpha.200"
-      // ----------------------------
       borderRadius="2xl"
       boxShadow="xl"
       width="full"
       maxWidth="450px"
     >
-      <VStack spacing={6}>
+      <VStack gap={6}>
         <Heading as="h1" size="lg" fontWeight="bold">
           Tes Tipe Cuaca
         </Heading>
@@ -70,54 +70,42 @@ export default function PreTestForm() {
           Mulai tes untuk cari tahu.
         </Text>
 
-        {/* Input untuk Username */}
-        <FormControl isRequired>
-          <FormLabel>Username</FormLabel>
-          <InputGroup>
-            <InputLeftElement pointerEvents="none">
-              <Icon as={AtSignIcon} color="gray.400" />
-            </InputLeftElement>
-            <Input
-              variant="filled"
-              placeholder="username_unik_kamu"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              _placeholder={{ color: "gray.500" }}
-              bg="whiteAlpha.300"
-              _hover={{ bg: "whiteAlpha.400" }}
-              _focus={{ bg: "whiteAlpha.400" }}
-            />
-          </InputGroup>
-        </FormControl>
+        {/* Input untuk Nama */}
+        <Field.Root required width="full">
+          <Field.Label color="white">Nama</Field.Label>
+          <Input
+            variant="subtle"
+            placeholder="Nama kamu"
+            value={nama}
+            onChange={(e) => setNama(e.target.value)}
+            bg="whiteAlpha.300"
+            color="white"
+            _placeholder={{ color: "gray.400" }}
+          />
+        </Field.Root>
 
-        {/* Input untuk Email */}
-        <FormControl isRequired>
-          <FormLabel>Email</FormLabel>
-          <InputGroup>
-            <InputLeftElement pointerEvents="none">
-              <Icon as={EmailIcon} color="gray.400" />
-            </InputLeftElement>
-            <Input
-              type="email"
-              variant="filled"
-              placeholder="email@kamu.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              _placeholder={{ color: "gray.500" }}
-              bg="whiteAlpha.300"
-              _hover={{ bg: "whiteAlpha.400" }}
-              _focus={{ bg: "whiteAlpha.400" }}
-            />
-          </InputGroup>
-        </FormControl>
+        {/* Input untuk Email (Optional) */}
+        <Field.Root width="full">
+          <Field.Label color="white">Email (Opsional)</Field.Label>
+          <Input
+            type="email"
+            variant="subtle"
+            placeholder="email@kamu.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            bg="whiteAlpha.300"
+            color="white"
+            _placeholder={{ color: "gray.400" }}
+          />
+        </Field.Root>
 
         {/* Tombol Submit */}
         <Button
           type="submit"
-          colorScheme="teal"
+          colorPalette="teal"
           size="lg"
           width="full"
-          isLoading={isLoading}
+          loading={isLoading}
           loadingText="Menganalisa..."
         >
           Mulai Tes

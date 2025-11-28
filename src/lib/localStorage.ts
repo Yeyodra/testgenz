@@ -103,3 +103,91 @@ export function clearTestResult(): void {
     // Don't throw - clearing is not critical
   }
 }
+
+const HISTORY_KEY = 'testgenz_history';
+
+/**
+ * Save test result to history
+ * @param result - The test result to add to history
+ */
+export function saveTestResultToHistory(result: TestResult): void {
+  try {
+    // Validate data structure before saving
+    if (!validateTestResult(result)) {
+      throw new Error('Invalid test result structure');
+    }
+
+    // Get existing history
+    const history = getTestResultHistory();
+    
+    // Add new result to the beginning of the array
+    history.unshift(result);
+    
+    // Keep only last 10 results
+    const limitedHistory = history.slice(0, 10);
+    
+    // Save back to localStorage
+    const jsonString = JSON.stringify(limitedHistory);
+    localStorage.setItem(HISTORY_KEY, jsonString);
+  } catch (error) {
+    console.error('Failed to save test result to history:', error);
+    // Don't throw - history is not critical
+  }
+}
+
+/**
+ * Get all test results from history
+ * @returns Array of test results, newest first
+ */
+export function getTestResultHistory(): TestResult[] {
+  try {
+    const jsonString = localStorage.getItem(HISTORY_KEY);
+    
+    if (!jsonString) {
+      return [];
+    }
+
+    const data = JSON.parse(jsonString);
+    
+    // Validate that it's an array
+    if (!Array.isArray(data)) {
+      console.warn('Invalid history data in localStorage');
+      return [];
+    }
+    
+    // Filter out invalid results
+    const validResults = data.filter(item => validateTestResult(item));
+    
+    return validResults;
+  } catch (error) {
+    console.error('Failed to get test result history from localStorage:', error);
+    return [];
+  }
+}
+
+/**
+ * Clear all test result history
+ */
+export function clearTestResultHistory(): void {
+  try {
+    localStorage.removeItem(HISTORY_KEY);
+  } catch (error) {
+    console.error('Failed to clear test result history from localStorage:', error);
+  }
+}
+
+/**
+ * Delete a specific test result from history by timestamp
+ * @param timestamp - The timestamp of the result to delete
+ */
+export function deleteTestResultFromHistory(timestamp: string): void {
+  try {
+    const history = getTestResultHistory();
+    const filteredHistory = history.filter(result => result.timestamp !== timestamp);
+    
+    const jsonString = JSON.stringify(filteredHistory);
+    localStorage.setItem(HISTORY_KEY, jsonString);
+  } catch (error) {
+    console.error('Failed to delete test result from history:', error);
+  }
+}

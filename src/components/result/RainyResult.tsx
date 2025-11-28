@@ -25,6 +25,10 @@ export const RainyResult = ({
     window.location.href = "/test";
   };
 
+  const handleViewHistory = () => {
+    window.location.href = "/history";
+  };
+
   return (
     <Box position="relative" minHeight="100vh" width="100%">
       {/* Background Placeholder */}
@@ -71,6 +75,7 @@ export const RainyResult = ({
           <ActionButtons
             onBackToHome={handleBackToHome}
             onRetakeTest={handleRetakeTest}
+            onViewHistory={handleViewHistory}
           />
         </Box>
       </Container>

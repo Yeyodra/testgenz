@@ -6,13 +6,11 @@ import {
   VStack,
   Text,
 } from "@chakra-ui/react";
-import Button from "../components/common/Button"; // Import tombol kustom Anda
-import Link from "next/link"; 
+import PreTestForm from "@/components/test/PreTestForm";
 
 export default function Home() {
   return (
     <Container
-      // Kita samakan latarnya agar konsisten
       bgGradient="linear(to-br, #1A202C, #2D3748, #4A5568)"
       color="white"
       centerContent
@@ -20,24 +18,20 @@ export default function Home() {
       display="flex"
       alignItems="center"
       justifyContent="center"
-      maxW="full" // Ambil lebar penuh
+      maxW="full"
     >
-      <VStack spacing={6} p={4} textAlign="center">
-        <Heading as="h1" size="2xl" fontWeight="bold">
-          Selamat Datang di TestGenz 🧠
-        </Heading>
-        <Text fontSize="xl" color="gray.300">
-          Cari tahu tipe kepribadianmu melalui tes psikologi yang seru.
-        </Text>
+      <VStack gap={8} p={4} textAlign="center">
+        <div>
+          <Heading as="h1" size="2xl" fontWeight="bold" mb={4}>
+            Selamat Datang di TestGenz 🧠
+          </Heading>
+          <Text fontSize="xl" color="gray.300">
+            Cari tahu tipe kepribadianmu melalui tes psikologi yang seru.
+          </Text>
+        </div>
 
-        {/* --- INI ADALAH KONEKSINYA --- */}
-        <Link href="/test">
-          <Button> {/* Otomatis punya style 'teal', 'lg', dan 'shadow' */}
-            Mulai Tes
-          </Button>
-        </Link>
-        {/* ----------------------------- */}
-        
+        {/* Form untuk input data user sebelum mulai tes */}
+        <PreTestForm />
       </VStack>
     </Container>
   );
