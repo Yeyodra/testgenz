@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, startTransition } from "react";
+import { Suspense, useEffect, startTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Container,
@@ -11,7 +11,7 @@ import {
 import PreTestForm from "@/components/test/PreTestForm";
 import { toaster } from "@/components/ui/toaster";
 
-export default function Home() {
+function HomeContent() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -56,5 +56,13 @@ export default function Home() {
         <PreTestForm />
       </VStack>
     </Container>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }
