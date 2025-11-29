@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Box, Container, Button, Text, Alert } from "@chakra-ui/react";
 import { ProgressBar, QuestionCard, LoadingOverlay } from "@/components/test";
 import { saveTestResult, saveTestResultToHistory } from "@/lib/localStorage";
+import { isUserAuthenticated, getCurrentUser } from "@/lib/userAuth";
 import type { Question } from "@/lib/questions";
 import type { TestResult, AnalysisResponse } from "@/types";
 
@@ -17,13 +18,31 @@ const getSection = (questionNumber: number): string => {
 
 export default function TestPage() {
   const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [questionsData, setQuestionsData] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<{ [key: number]: string }>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Check if user has filled the form
   useEffect(() => {
+    const authenticated = isUserAuthenticated();
+    setIsAuthenticated(authenticated);
+    
+    if (!authenticated) {
+      // Immediately redirect without showing the page
+      router.replace("/?error=auth_required");
+      return;
+    }
+  }, [router]);
+
+  useEffect(() => {
+    // Only load questions if authenticated
+    if (isAuthenticated === false) {
+      return;
+    }
+
     const loadQuestions = async () => {
       try {
         setIsLoading(true);
@@ -42,11 +61,18 @@ export default function TestPage() {
       }
     };
 
-    loadQuestions();
-  }, []);
+    if (isAuthenticated === true) {
+      loadQuestions();
+    }
+  }, [isAuthenticated]);
+
+  // Don't render anything if not authenticated (redirecting)
+  if (isAuthenticated === false) {
+    return null;
+  }
 
   // Jika belum ada data, tampilkan loading atau error
-  if (isLoading) {
+  if (isLoading || isAuthenticated === null) {
     return <LoadingOverlay message="Memuat pertanyaan..." />;
   }
 
@@ -100,19 +126,10 @@ export default function TestPage() {
     }));
 
     // Get user data from localStorage (saved by PreTestForm)
-    let userData = {
+    const userData = getCurrentUser() || {
       nama: "Tester",
       email: undefined as string | undefined,
     };
-    
-    try {
-      const savedUserData = localStorage.getItem("testgenz_user");
-      if (savedUserData) {
-        userData = JSON.parse(savedUserData);
-      }
-    } catch (err) {
-      console.error("Failed to load user data:", err);
-    }
 
     try {
       const response = await fetch("/api/analyze", {

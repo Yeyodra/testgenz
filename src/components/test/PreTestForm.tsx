@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Box,
@@ -13,6 +13,8 @@ import {
 } from "@chakra-ui/react";
 import { Field } from "@chakra-ui/react";
 import { toaster } from "@/components/ui/toaster";
+import { saveUserData, getCurrentUser } from "@/lib/userAuth";
+import { updateHistoryUserName } from "@/lib/localStorage";
 
 export default function PreTestForm() {
   const router = useRouter();
@@ -20,30 +22,80 @@ export default function PreTestForm() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Load existing user data from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedUserData = localStorage.getItem("testgenz_user");
+      if (savedUserData) {
+        const userData = JSON.parse(savedUserData);
+        if (userData.nama) {
+          setNama(userData.nama);
+        }
+        if (userData.email) {
+          setEmail(userData.email);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load user data:", err);
+    }
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate nama
+    if (!nama || nama.trim() === "") {
+      toaster.create({
+        title: "Nama wajib diisi",
+        description: "Silakan masukkan nama Anda untuk melanjutkan",
+        type: "error",
+        duration: 3000,
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     // Simpan data user ke localStorage untuk digunakan saat submit tes
     const userData = {
-      nama,
-      email: email || undefined, // email is optional
+      nama: nama.trim(),
+      email: email && email.trim() !== "" ? email.trim() : undefined,
     };
     
-    localStorage.setItem("testgenz_user", JSON.stringify(userData));
-
-    setTimeout(() => {
+    try {
+      // Check if name has changed
+      const currentUser = getCurrentUser();
+      const nameChanged = currentUser && currentUser.nama !== userData.nama;
+      
+      // Save new user data
+      saveUserData(userData);
+      
+      // If name changed, update all history entries with new name
+      if (nameChanged) {
+        updateHistoryUserName(userData.nama);
+      }
+      
+      setTimeout(() => {
+        setIsLoading(false);
+        toaster.create({
+          title: "Satu langkah lagi!",
+          description: "Data diri diterima. Memuat tes kepribadian...",
+          type: "success",
+          duration: 3000,
+        });
+        
+        // Navigate ke halaman tes
+        router.push("/test");
+      }, 1500);
+    } catch (err) {
       setIsLoading(false);
       toaster.create({
-        title: "Satu langkah lagi!",
-        description: "Data diri diterima. Memuat tes kepribadian...",
-        type: "success",
+        title: "Gagal menyimpan data",
+        description: "Terjadi kesalahan. Silakan coba lagi",
+        type: "error",
         duration: 3000,
       });
-      
-      // Navigate ke halaman tes
-      router.push("/test");
-    }, 1500);
+    }
   };
 
   return (

@@ -191,3 +191,46 @@ export function deleteTestResultFromHistory(timestamp: string): void {
     console.error('Failed to delete test result from history:', error);
   }
 }
+
+/**
+ * Update user name in all history entries
+ * This keeps the history consistent when user changes their name
+ * @param newName - The new name to apply to all history entries
+ */
+export function updateHistoryUserName(newName: string): void {
+  try {
+    const history = getTestResultHistory();
+    
+    if (history.length === 0) {
+      return;
+    }
+    
+    // Update nama in all history entries
+    const updatedHistory = history.map(result => ({
+      ...result,
+      userData: {
+        ...result.userData,
+        nama: newName,
+      },
+    }));
+    
+    // Save updated history
+    const jsonString = JSON.stringify(updatedHistory);
+    localStorage.setItem(HISTORY_KEY, jsonString);
+    
+    // Also update current result if exists
+    const currentResult = getTestResult();
+    if (currentResult) {
+      const updatedResult = {
+        ...currentResult,
+        userData: {
+          ...currentResult.userData,
+          nama: newName,
+        },
+      };
+      saveTestResult(updatedResult);
+    }
+  } catch (error) {
+    console.error('Failed to update history user name:', error);
+  }
+}
